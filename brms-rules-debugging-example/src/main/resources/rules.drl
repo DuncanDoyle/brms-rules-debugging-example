@@ -1,0 +1,56 @@
+package org.jboss.ddoyle.brms.debug.rules;
+
+import org.jboss.ddoyle.brms.debug.model.Applicant;
+import org.jboss.ddoyle.brms.debug.model.Loan;
+
+global org.slf4j.Logger logger;
+
+
+//Credit too low
+rule "Rule 1 LoanApproval"
+	when
+		f1 : Applicant( creditScore <= 200 )
+		f2 : Loan( amount >= 0 )
+	then
+		if (logger.isDebugEnabled()) {
+			logger.info("Rule 1 fired");
+		}
+		f2.setApproved(false);
+end
+
+
+//Low amount low credit
+rule "Rule 2 LoanApproval"
+	when
+		f1 : Applicant( creditScore >= 201 , creditScore <= 400 )
+		f2 : Loan( amount <= 4000 )
+	then
+		if (logger.isDebugEnabled()) {
+			logger.debug("Rule 2 fired.");
+		}
+		f2.setApproved( true );
+end
+
+//High amount low credit
+rule "Rule 3 LoanApproval"
+	when
+		f1 : Applicant( creditScore >= 201 , creditScore <= 400 )
+		f2 : Loan( amount >= 4001 )
+	then
+		if (logger.isDebugEnabled()) {
+			logger.debug("Rule 3 fired.");
+		}
+		f2.setApproved(false);
+end
+
+//High amount high credit
+rule "Rule 4 LoanApproval"
+	when
+		f1 : Applicant( creditScore >= 401 )
+		f2 : Loan( amount <= 5000 )
+	then
+		if (logger.isDebugEnabled()) {
+			logger.debug("Rule 4 fired.");
+		}
+		f2.setApproved( true );
+end
